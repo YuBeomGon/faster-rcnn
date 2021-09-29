@@ -14,4 +14,6 @@ distributed data parallel을 써야 한다.
 
 python -W ignore -m torch.distributed.launch --nproc_per_node=6 --master_addr=192.168.40.242 --master_port=50019 --use_env train.py --model fasterrcnn_resnet201_fpn --sync-bn
 
+python -W ignore -m torch.distributed.launch --nproc_per_node=6 --master_addr=192.168.40.242 --master_port=50019 --use_env train_lbp.py --model fasterrcnn_resnet201_fpn --sync-bn
+
 python -W ignore -m torch.distributed.launch --nproc_per_node=4 --master_addr=192.168.40.242 --master_port=50019 --use_env train_lbp.py --model fasterrcnn_resnet50_fpn --sync-bn --pretrained | tee outputs/lbp_train_resnet50.log
