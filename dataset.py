@@ -15,11 +15,19 @@ import torch.nn.functional as F
 IMAGE_SIZE = 2048
 
 train_transforms = A.Compose([
-    A.Resize(IMAGE_SIZE, IMAGE_SIZE, p=1),
-    A.HorizontalFlip(p=0.5),
-    A.VerticalFlip(p=0.5),
-    A.RandomRotate90(p=0.5),   
-    A.RandomResizedCrop(height=IMAGE_SIZE,width=IMAGE_SIZE,scale=[0.8,1.0],ratio=[0.8,1.2],p=0.8),
+    #A.Resize(IMAGE_SIZE, IMAGE_SIZE, p=1),
+    A.OneOf([
+        A.HorizontalFlip(p=.8),
+        A.VerticalFlip(p=.8),
+        A.RandomRotate90(p=.8)]
+    ),
+    A.RandomResizedCrop(height=IMAGE_SIZE,width=IMAGE_SIZE,scale=[0.8,1.0],ratio=[0.8,1.2],p=0.7),
+    A.OneOf([
+        A.transforms.JpegCompression(quality_lower=99, quality_upper=100, p=.7),
+        A.transforms.RandomFog(fog_coef_lower=0.1, fog_coef_upper=0.2, alpha_coef=0.08, p=.7),
+        A.transforms.RandomGamma(gamma_limit=(80, 120), eps=None, p=.7),
+    ]),
+    A.transforms.ColorJitter(brightness=0.05, contrast=0.2, saturation=0.2, hue=0.02, p=.7),
     A.pytorch.ToTensor(), 
 ], p=1.0, bbox_params=A.BboxParams(format='pascal_voc', min_area=0, min_visibility=0.8, label_fields=['labels']))    
 
@@ -55,6 +63,7 @@ class LbpDataset(Dataset):
         self,
         image_list,
         transform=None,
+        featuremap_size=32,
     ):
         self.image_list = image_list
         self.transform = transform
@@ -62,6 +71,8 @@ class LbpDataset(Dataset):
         self.threshold = 220
         self.image_mean = torch.tensor([0.485, 0.456, 0.406])
         self.image_std = torch.tensor([0.229, 0.224, 0.225])
+        self.featuremap_size = featuremap_size
+        self.image_size = IMAGE_SIZE
         
     def __len__(self):
         return len(self.image_list)
@@ -95,9 +106,26 @@ class LbpDataset(Dataset):
         image = image/255.
         image = (image - self.image_mean[:, None, None]) / self.image_std[:, None, None]
         
-        if len(boxes) == 0 :
-            boxes = np.array([[0,0,.01,.01]])
-            labels = np.array([0])
+#         if len(boxes) == 0 :
+#             boxes = np.array([[0,0,.0,0]])
+#             labels = np.array([0])
+
+        abcell = torch.ones(self.featuremap_size * self.featuremap_size) * (-1.)
+     
+        if len(boxes) > 0 :
+            abnormal_cell_not_indices = torch.randperm(len(abcell))[:10] 
+            abcell[abnormal_cell_not_indices] = 0.  
+            abcell = abcell.view(self.featuremap_size, self.featuremap_size)
+            for box, label in zip(boxes, labels) :
+                xmin, ymin, xmax, ymax = box
+                height = ymax - ymin
+                width = xmax - xmin
+                i, j = int(self.featuremap_size * (ymin+height/2)/self.image_size), \
+                        int(self.featuremap_size * (xmin+width/2)/self.image_size)     
+                
+#                 print(label)
+                
+                abcell[i,j] = 1.
             
         iscrowd = torch.zeros((len(boxes)), dtype=torch.int64)
         
@@ -107,6 +135,7 @@ class LbpDataset(Dataset):
         target["image_id"] = torch.as_tensor(image_id, dtype=torch.long)
         target["area"] = torch.as_tensor(area, dtype=torch.float32) 
         target["iscrowd"] = iscrowd
+        target['abcell'] = abcell
 #         target["path"] = path
 #         target['image_id'] = torch.as_tensor(path,dtype=torch.long)
             
