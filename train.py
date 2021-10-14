@@ -34,7 +34,7 @@ from engine import train_one_epoch, evaluate
 
 import presets
 import utils
-from model import fasterrcnn_resnet201_fpn, fasterrcnn_resnet101_fpn, fasterrcnn_resnet152_fpn
+from rcnn_model import fasterrcnn_resnet201_fpn, fasterrcnn_resnet101_fpn, fasterrcnn_resnet152_fpn
 
 
 def get_dataset(name, image_set, transform, data_path):

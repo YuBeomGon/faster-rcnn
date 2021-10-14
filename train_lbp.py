@@ -29,7 +29,7 @@ import torch.optim as optim
 from dataset import LbpDataset, train_transforms, val_transforms, test_transforms, collate_fn, get_data
 # from visualize import visualize
 # from scheduler import CosineAnnealingWarmUpRestarts
-from model import fasterrcnn_resnet101_fpn, fasterrcnn_resnet152_fpn, fasterrcnn_resnet201_fpn, FastRCNNPredictor, fasterrcnn_resnet50_fpn
+from rcnn_model import fasterrcnn_resnet101_fpn, fasterrcnn_resnet152_fpn, fasterrcnn_resnet201_fpn, FastRCNNPredictor, fasterrcnn_resnet50_fpn
 #from torchvision.models.detection.faster_rcnn import fasterrcnn_resnet50_fpn
 from engine import train_one_epoch, evaluate
 from coco_utils import get_coco, get_coco_kp
@@ -44,8 +44,7 @@ import utils
 
 import warnings
 warnings.filterwarnings("ignore")
-os.environ["CUDA_VISIBLE_DEVICES"] = "2,3,4,5"  
-
+# os.environ["CUDA_VISIBLE_DEVICES"] = "2,3,4,5"  
 
 
 def get_train_test_list(df_dir) :

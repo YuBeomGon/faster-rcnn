@@ -56,6 +56,7 @@ def get_data(img_id, df_data):
     size = data[['w', 'h']].values
     area = data[['area']].values
     ID = data[['ID']].values
+#     ID = data['ID'].values
     return dict(image_id = img_id, boxes = boxes, labels=labels, size=size, area=area, ID=ID)
 
 class LbpDataset(Dataset):
@@ -63,11 +64,12 @@ class LbpDataset(Dataset):
         self,
         image_list,
         transform=None,
-        featuremap_size=32,
+        featuremap_size=64,
     ):
         self.image_list = image_list
         self.transform = transform
-        self.default_path = '/home/NAS/nas4/project_scl/'
+#         self.default_path = '/home/NAS/nas4/project_scl/'
+        self.default_path = '/home/Dataset/scl/'
         self.threshold = 220
         self.image_mean = torch.tensor([0.485, 0.456, 0.406])
         self.image_std = torch.tensor([0.229, 0.224, 0.225])
@@ -85,9 +87,10 @@ class LbpDataset(Dataset):
         labels = self.image_list[index]['labels']
         size = self.image_list[index]['size']
 #         area = self.image_list[index]['area']
-        #image_id = torch.tensor([index])
-        image_id = self.image_list[index]['ID']
+        image_id = torch.tensor([index])
+#         image_id = self.image_list[index]['ID']
 #         print(area)
+#         print(image_id)
 #         print(type(boxes))
 
         image = cv2.imread(self.default_path + path) 
@@ -126,8 +129,15 @@ class LbpDataset(Dataset):
 #                 print(label)
                 
                 abcell[i,j] = 1.
+        else :
+#             print('no bbox found')
+            boxes = np.array([[0,0,.01,.01]])
+            labels = labels = np.array([0])
+            abcell = abcell.view(self.featuremap_size, self.featuremap_size)
             
         iscrowd = torch.zeros((len(boxes)), dtype=torch.int64)
+
+#         print('labels', labels)
         
         target = {}
         target['boxes'] = torch.as_tensor(boxes, dtype=torch.float32)
@@ -135,7 +145,7 @@ class LbpDataset(Dataset):
         target["image_id"] = torch.as_tensor(image_id, dtype=torch.long)
         target["area"] = torch.as_tensor(area, dtype=torch.float32) 
         target["iscrowd"] = iscrowd
-        target['abcell'] = abcell
+        target['abcell'] = torch.unsqueeze(abcell, dim=0)
 #         target["path"] = path
 #         target['image_id'] = torch.as_tensor(path,dtype=torch.long)
             
