@@ -14,8 +14,8 @@ from torchvision.models.detection.rpn import RPNHead, RegionProposalNetwork
 from torchvision.models.detection.roi_heads import RoIHeads
 from torchvision.models.detection.transform import GeneralizedRCNNTransform
 # LBP_specific
-# from torchvision.models.detection.backbone_utils import _validate_trainable_layers, BackboneWithFPN
-from backbone_utils import _validate_trainable_layers, BackboneWithFPN
+from torchvision.models.detection.backbone_utils import _validate_trainable_layers, BackboneWithFPN
+# from backbone_utils import _validate_trainable_layers, BackboneWithFPN
 from torchvision.models.detection.faster_rcnn import FasterRCNN, TwoMLPHead, FastRCNNPredictor
 from torchvision.models.detection.generalized_rcnn import GeneralizedRCNN
 
@@ -225,8 +225,8 @@ class GeneralRCNN(GeneralizedRCNN):
 
         losses = {}
         # LBP_specific
-        features, abcell_losses = self.backbone(images.tensors, targets)
-#         features = self.backbone(images.tensors)
+#         features, abcell_losses = self.backbone(images.tensors, targets)
+        features = self.backbone(images.tensors)
         if isinstance(features, torch.Tensor):
             features = OrderedDict([('0', features)])
         proposals, proposal_losses = self.rpn(images, features, targets)
@@ -234,7 +234,7 @@ class GeneralRCNN(GeneralizedRCNN):
         detections = self.transform.postprocess(detections, images.image_sizes, original_image_sizes)
         
         # LBP_specific
-        losses.update(abcell_losses)
+#         losses.update(abcell_losses)
         losses.update(detector_losses)
         losses.update(proposal_losses)
 
