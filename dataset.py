@@ -12,22 +12,23 @@ from torch.utils.data import Dataset, DataLoader
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-IMAGE_SIZE = 2048
+# IMAGE_SIZE = 2048
+IMAGE_SIZE = 1024
 
 train_transforms = A.Compose([
-    #A.Resize(IMAGE_SIZE, IMAGE_SIZE, p=1),
+    A.Resize(IMAGE_SIZE, IMAGE_SIZE, p=1),
     A.OneOf([
         A.HorizontalFlip(p=.8),
         A.VerticalFlip(p=.8),
         A.RandomRotate90(p=.8)]
     ),
-    A.RandomResizedCrop(height=IMAGE_SIZE,width=IMAGE_SIZE,scale=[0.8,1.0],ratio=[0.8,1.2],p=0.7),
-    A.OneOf([
-        A.transforms.JpegCompression(quality_lower=99, quality_upper=100, p=.7),
-        A.transforms.RandomFog(fog_coef_lower=0.1, fog_coef_upper=0.2, alpha_coef=0.08, p=.7),
-        A.transforms.RandomGamma(gamma_limit=(80, 120), eps=None, p=.7),
-    ]),
-    A.transforms.ColorJitter(brightness=0.05, contrast=0.2, saturation=0.2, hue=0.02, p=.7),
+    A.RandomResizedCrop(height=IMAGE_SIZE,width=IMAGE_SIZE,scale=[0.8,1.0],ratio=[0.8,1.2],p=0.5),
+#     A.OneOf([
+#         A.transforms.JpegCompression(quality_lower=99, quality_upper=100, p=.5),
+#         A.transforms.RandomFog(fog_coef_lower=0.1, fog_coef_upper=0.2, alpha_coef=0.08, p=.5),
+#         A.transforms.RandomGamma(gamma_limit=(80, 120), eps=None, p=.5),
+#     ]),
+    A.transforms.ColorJitter(brightness=0.05, contrast=0.2, saturation=0.2, hue=0.02, p=.5),
     A.pytorch.ToTensor(), 
 ], p=1.0, bbox_params=A.BboxParams(format='pascal_voc', min_area=0, min_visibility=0.8, label_fields=['labels']))    
 
