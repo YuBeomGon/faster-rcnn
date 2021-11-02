@@ -29,8 +29,23 @@ def train_one_epoch(model, optimizer, data_loader, device, epoch, print_freq):
         targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
 
         loss_dict = model(images, targets)
+#         print(loss_dict.keys())
 
-        losses = sum(loss for loss in loss_dict.values())
+#         losses = sum(loss for loss in loss_dict.values())
+        losses_rpn = sum(loss for key, loss in loss_dict.items() 
+                         if 'loss_objectness' in key or 'loss_rpn_box_reg' in key)
+    
+        loss_roi1 = sum(loss for key, loss in loss_dict.items() 
+                         if 'loss_classifier' in key or 'loss_rpn_box_reg' in key)
+        
+        loss_roi2 = sum(loss for key, loss in loss_dict.items() 
+                         if '2nd' in key)  
+        
+#         print('losses_rpn', losses_rpn)
+#         print('loss_roi1', loss_roi1)
+#         print('loss_roi2', loss_roi2)
+        
+        losses = losses_rpn + loss_roi1*2. + loss_roi2*3.
 
         # reduce losses over all GPUs for logging purposes
         loss_dict_reduced = utils.reduce_dict(loss_dict)
