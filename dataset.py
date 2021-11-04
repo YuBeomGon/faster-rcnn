@@ -88,11 +88,13 @@ class LbpDataset(Dataset):
         labels = self.image_list[index]['labels']
         size = self.image_list[index]['size']
 #         area = self.image_list[index]['area']
-        image_id = torch.tensor([index])
-#         image_id = self.image_list[index]['ID']
+#         image_id = torch.tensor([index])
+        image_id = self.image_list[index]['ID'][0]
 #         print(area)
 #         print(image_id)
+#         print(path)
 #         print(type(boxes))
+#         print(boxes)
 
         image = cv2.imread(self.default_path + path) 
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -107,7 +109,10 @@ class LbpDataset(Dataset):
             boxes = augmentations["bboxes"]
             labels = augmentations["labels"]
 
-        image = image/255.
+#             need to check the value of image, albumentation do automatically normalize 
+#             if dtype is uint8, it will be different by version of albumentation
+#             so must check the value
+#         image = image/255.
         image = (image - self.image_mean[:, None, None]) / self.image_std[:, None, None]
         
 #         if len(boxes) == 0 :
