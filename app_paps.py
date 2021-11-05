@@ -1,3 +1,5 @@
+# https://tutorials.pytorch.kr/intermediate/flask_rest_api_tutorial.html
+# https://tutorials.pytorch.kr/recipes/deployment_with_flask.html
 import io
 import json
 import os
