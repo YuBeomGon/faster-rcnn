@@ -13,6 +13,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 IMAGE_SIZE = 2048
+# IMAGE_SIZE= 1024
 
 train_transforms = A.Compose([
     A.Resize(IMAGE_SIZE, IMAGE_SIZE, p=1),
@@ -59,6 +60,7 @@ class LbpDataset(Dataset):
         self.image_list = image_list
         self.transform = transform
         self.default_path = '/home/NAS/nas4/project_scl/'
+        self.default_path = '/home/k8s-storage/cvat-share-pv/'
         self.threshold = 220
         self.image_mean = torch.tensor([0.485, 0.456, 0.406])
         self.image_std = torch.tensor([0.229, 0.224, 0.225])
@@ -74,8 +76,8 @@ class LbpDataset(Dataset):
         labels = self.image_list[index]['labels']
         size = self.image_list[index]['size']
 #         area = self.image_list[index]['area']
-        #image_id = torch.tensor([index])
-        image_id = self.image_list[index]['ID']
+        image_id = torch.tensor([index])
+#         image_id = self.image_list[index]['ID']
 #         print(area)
 #         print(type(boxes))
 
@@ -98,6 +100,7 @@ class LbpDataset(Dataset):
         if len(boxes) == 0 :
             boxes = np.array([[0,0,.01,.01]])
             labels = np.array([0])
+            
             
         iscrowd = torch.zeros((len(boxes)), dtype=torch.int64)
         

@@ -44,7 +44,7 @@ import utils
 
 import warnings
 warnings.filterwarnings("ignore")
-os.environ["CUDA_VISIBLE_DEVICES"] = "2,3,4,5"  
+# os.environ["CUDA_VISIBLE_DEVICES"] = "2,3,4,5"  
 
 
 
