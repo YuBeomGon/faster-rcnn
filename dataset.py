@@ -60,7 +60,7 @@ class LbpDataset(Dataset):
     ):
         self.image_list = image_list
         self.transform = transform
-        self.default_path = '/home/NAS/nas4/project_scl/'
+        self.default_path = default_path
         self.threshold = 220
         self.image_mean = torch.tensor([0.485, 0.456, 0.406])
         self.image_std = torch.tensor([0.229, 0.224, 0.225])
