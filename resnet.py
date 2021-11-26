@@ -60,6 +60,8 @@ class BasicBlock(nn.Module):
         self.conv1 = conv3x3(inplanes, planes, stride)
         self.bn1 = norm_layer(planes)
         self.relu = nn.ReLU(inplace=True)
+        self.gelu = nn.GELU()
+        self.sigmoid = nn.Sigmoid()
         self.conv2 = conv3x3(planes, planes)
         self.bn2 = norm_layer(planes)
         self.downsample = downsample
@@ -70,15 +72,16 @@ class BasicBlock(nn.Module):
 
         out = self.conv1(x)
         out = self.bn1(out)
-        out = self.relu(out)
+        out = self.gelu(out)
 
         out = self.conv2(out)
-        out = self.bn2(out)
+#         out = self.bn2(out)
 
         if self.downsample is not None:
             identity = self.downsample(x)
 
-        out += identity
+        out = identity * self.sigmoid(out)
+        out = self.bn2(out)
         out = self.relu(out)
 
         return out
@@ -116,6 +119,8 @@ class Bottleneck(nn.Module):
         self.conv3 = conv1x1(width, planes * self.expansion)
         self.bn3 = norm_layer(planes * self.expansion)
         self.relu = nn.ReLU(inplace=True)
+        self.gelu = nn.GELU()
+        self.sigmoid = nn.Sigmoid()
         self.downsample = downsample
         self.stride = stride
 
@@ -124,19 +129,20 @@ class Bottleneck(nn.Module):
 
         out = self.conv1(x)
         out = self.bn1(out)
-        out = self.relu(out)
+        out = self.gelu(out)
 
         out = self.conv2(out)
         out = self.bn2(out)
-        out = self.relu(out)
+        out = self.gelu(out)
 
         out = self.conv3(out)
-        out = self.bn3(out)
+#         out = self.bn3(out)
 
         if self.downsample is not None:
             identity = self.downsample(x)
 
-        out += identity
+        out = identity * self.sigmoid(out)
+        out = self.bn3(out)
         out = self.relu(out)
 
         return out
