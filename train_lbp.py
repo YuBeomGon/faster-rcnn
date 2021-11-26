@@ -44,14 +44,16 @@ import utils
 
 import warnings
 warnings.filterwarnings("ignore")
-os.environ["CUDA_VISIBLE_DEVICES"] = "2,3,4,5"  
+# os.environ["CUDA_VISIBLE_DEVICES"] = "2,3,4,5"  
 
 
 
-def get_train_test_list(df_dir) :
-    df = pd.read_csv(df_dir)
-    df['label_id'] = df.label.apply(lambda x : 1 if 'ASC-US' in x or 'ASC-US with HPV infection' in x 
-                                    or 'AS' in x else 0.)
+def get_train_test_list(df) :
+#     df = pd.read_csv(df_dir)
+    df['label_id'] = df.label.apply(lambda x : 0. if 'Benign' in x or 'Negative' in x else 1.)
+
+#     df['label_id'] = df.label.apply(lambda x : 1 if 'ASC-US' in x or 'ASC-US with HPV infection' in x 
+#                                     or 'AS' in x else 0.)
     df = df[df['label_id'] == 1]    
     
     df['xmax'] = df.apply(lambda x : x['xmin'] + x['w'], axis=1)
