@@ -12,8 +12,8 @@ from torch.utils.data import Dataset, DataLoader
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-IMAGE_SIZE = 1200
-# IMAGE_SIZE= 1024
+# IMAGE_SIZE = 1200
+IMAGE_SIZE= 1024
 
 train_transforms = A.Compose([
     A.Resize(IMAGE_SIZE, IMAGE_SIZE, p=1),
