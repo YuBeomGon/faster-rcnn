@@ -17,3 +17,21 @@ python -W ignore -m torch.distributed.launch --nproc_per_node=6 --master_addr=19
 python -W ignore -m torch.distributed.launch --nproc_per_node=6 --master_addr=192.168.40.242 --master_port=50019 --use_env train_lbp.py --model fasterrcnn_resnet201_fpn --sync-bn
 
 python -W ignore -m torch.distributed.launch --nproc_per_node=4 --master_addr=192.168.40.242 --master_port=50019 --use_env train_lbp.py --model fasterrcnn_resnet50_fpn --sync-bn --pretrained | tee outputs/lbp_train_resnet50.log
+
+python -W ignore -m torch.distributed.launch --nproc_per_node=6 --master_addr=192.168.40.242 --master_port=50019 --use_env train_lbp.py --model retinanet_resnet50_fpn --sync-bn | tee retinanet_resnet50.log
+
+retinanet_resnet50_fpn
+abnormal one class detection
+image_size : 1024 
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.405
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.725
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.414
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.000
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.042
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.518
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.403
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.595
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.611
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.522
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.621
